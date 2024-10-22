@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react"
 import "./Todos.css"
-import { getAllToDoItems } from "../../services/DoList"
+import { getAllToDoItems } from "../../services/TodoService"
 
 export const TodoList = () => {
     const [allTodos, setAllTodos] = useState([])
     const [ showNecessityOnly, setShowNecessityOnly ] = useState([false])
     const [ filteredTodos, setFilteredTodos] = useState([])
+    const [ searchTerm, setSearchTerm] = useState("")
 
     useEffect(() => {
         getAllToDoItems().then(todosArray => {
@@ -25,12 +26,16 @@ export const TodoList = () => {
         }
     }, [showNecessityOnly, allTodos])
 
+    useEffect(() => {
+        const foundTodos = allTodos.filter((todo) => 
+            todo.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        setFilteredTodos(foundTodos)
+    }, [searchTerm, allTodos])
+
         return <div className="tickets-container">
             <h2> Todo List </h2>
-            <div>
-                <button className="filter-btn btn-primary" onClick={() =>{setShowNecessityOnly(true)}}> Need to do </button>
-                <button className="filter-btn btn-info" onClick={() => {setShowNecessityOnly(false)}}> All Items</button>
-            </div>
+
             <article className="tickets">
                 {filteredTodos.map(todo => {
                     return (

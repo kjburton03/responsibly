@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAllShopItems } from "../../services/ShopList";
+import { getAllShopItems } from "../../services/ShopService";
 import "./Shops.css"
 
 export const ShopList = () => {
