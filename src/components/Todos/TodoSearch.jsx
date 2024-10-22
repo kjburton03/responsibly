@@ -1,4 +1,7 @@
-export const TodoSearch = () => {
+import { useState } from "react"
+
+export const TodoSearch = ({setSearchTerm, setShowNecessityOnly}) => {
+  
 
     return <>
         <div className="filter-bar">

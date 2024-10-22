@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
 import "./Todos.css"
 import { getAllToDoItems } from "../../services/TodoService"
+import { TodoSearch } from "./TodoSearch"
+import { Todo } from "./Todo"
 
 export const TodoList = () => {
     const [allTodos, setAllTodos] = useState([])
@@ -35,24 +37,12 @@ export const TodoList = () => {
 
         return <div className="tickets-container">
             <h2> Todo List </h2>
+                <TodoSearch setSearchTerm={setSearchTerm} setShowNecessityOnly={setShowNecessityOnly}/>
 
             <article className="tickets">
-                {filteredTodos.map(todo => {
-                    return (
-                        <section className="ticket" key={todo.id}>
-                            <header className="ticket-info">
-                            {todo.name}
-                            </header>
-                            <div> {todo.description} </div>
-                            <footer>
-                                <div> ${todo.price} </div>
-                                <div> item #{todo.id}</div>
-                                <div> Need to do </div>
-                                <div> {todo.necessity ? "yes" : "no" }</div>
-
-                            </footer>
-                        </section>
-                    )
+                {filteredTodos.map((todoObj) => {
+                    return <Todo todo={todoObj} key={todoObj.id} />
+                    
                 })}
             </article>
         </div>
