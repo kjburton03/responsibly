@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
-import { getAllShopItems } from "../../services/ShopList";
+import { getAllShopItems } from "../../services/ShopService";
+import { Shop } from "./Shop";
+import { ShopSearch } from "./ShopSearch";
 import "./Shops.css"
 
 export const ShopList = () => {
 const [allShops, setAllShops] = useState([])
 const [showNecessityOnly, setShowNecessityOnly] = useState(false)
+// const [showWantOnly, setWantOnly] = useState(true)
 const [filteredShops, setFilteredShops] = useState([])
+const [searchTerm, setSearchTerm] = useState("")
 
 useEffect(() => {
     getAllShopItems().then(shopsArray => {
@@ -25,26 +29,33 @@ useEffect(() => {
     }
     }, [showNecessityOnly, allShops])
 
+    // useEffect(() => {
+    //     if (showWantOnly) {
+    //         const wantShops = allShops.filter(
+    //             (shops) => shops.necessity === false
+    //         )
+    //         setFilteredShops(wantShops)
+    //     } else {
+    //         setFilteredShops(allShops)
+    //     }
+    //     }, [showWantOnly, allShops])
+    
+
+    useEffect(() => {
+        const foundShops = allShops.filter((shop) =>
+            shop.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        setFilteredShops(foundShops)
+    }, [searchTerm,allShops])
+
     return <div className="tickets-container">
         <h2> Shopping List </h2>
-        <div>
-            <button className="filter-btn btn-primary" onClick={() =>{setShowNecessityOnly (true)} }> It's a need ma'am</button>
-            <button className="filter-btn btn-info" onClick={() => {setShowNecessityOnly (false)} }> All Items </button>
-        </div>
+            <ShopSearch setSearchTerm={setSearchTerm} setShowNecessityOnly={setShowNecessityOnly}/>
+
         <article className="tickets">
-            {filteredShops.map(shop => {
-                return (
-                    <section className="ticket" key={shop.id}>
-                        <header className="ticket-info" > {shop.name} </header>
-                        <div> {shop.description} </div>
-                        <footer>
-                            <div> ${shop.price} </div>
-                            <div> Item  #{shop.id}  </div>
-                            <div> Necessity? </div>
-                            <div> {shop.necessity ? "definitely" : "no" } </div>
-                        </footer>
-                    </section>
-                )
+            {filteredShops.map((shopObj) => {
+                return <Shop shop={shopObj} key={shopObj.id} />
+                
             })}
             
         </article>

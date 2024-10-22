@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react"
 import "./Todos.css"
-import { getAllToDoItems } from "../../services/DoList"
+import { getAllToDoItems } from "../../services/TodoService"
+import { TodoSearch } from "./TodoSearch"
+import { Todo } from "./Todo"
 
 export const TodoList = () => {
     const [allTodos, setAllTodos] = useState([])
     const [ showNecessityOnly, setShowNecessityOnly ] = useState([false])
     const [ filteredTodos, setFilteredTodos] = useState([])
+    const [ searchTerm, setSearchTerm] = useState("")
 
     useEffect(() => {
         getAllToDoItems().then(todosArray => {
@@ -25,29 +28,21 @@ export const TodoList = () => {
         }
     }, [showNecessityOnly, allTodos])
 
+    useEffect(() => {
+        const foundTodos = allTodos.filter((todo) => 
+            todo.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        setFilteredTodos(foundTodos)
+    }, [searchTerm, allTodos])
+
         return <div className="tickets-container">
             <h2> Todo List </h2>
-            <div>
-                <button className="filter-btn btn-primary" onClick={() =>{setShowNecessityOnly(true)}}> Need to do </button>
-                <button className="filter-btn btn-info" onClick={() => {setShowNecessityOnly(false)}}> All Items</button>
-            </div>
-            <article className="tickets">
-                {filteredTodos.map(todo => {
-                    return (
-                        <section className="ticket" key={todo.id}>
-                            <header className="ticket-info">
-                            {todo.name}
-                            </header>
-                            <div> {todo.description} </div>
-                            <footer>
-                                <div> ${todo.price} </div>
-                                <div> item #{todo.id}</div>
-                                <div> Need to do </div>
-                                <div> {todo.necessity ? "yes" : "no" }</div>
+                <TodoSearch setSearchTerm={setSearchTerm} setShowNecessityOnly={setShowNecessityOnly}/>
 
-                            </footer>
-                        </section>
-                    )
+            <article className="tickets">
+                {filteredTodos.map((todoObj) => {
+                    return <Todo todo={todoObj} key={todoObj.id} />
+                    
                 })}
             </article>
         </div>
